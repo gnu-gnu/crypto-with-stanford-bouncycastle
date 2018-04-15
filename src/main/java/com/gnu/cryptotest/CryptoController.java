@@ -56,7 +56,13 @@ public class CryptoController {
 		map.put("n", pubkey.getModulus().toString());
 		map.put("e", pubkey.getExponent().toString());
 		return map;
-		
+	}
+	
+	@GetMapping("/getPrivatekey")
+	public @ResponseBody Map<String, String> getPrivateKey(){
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("d", privatekey.getExponent().toString());
+		return map;
 	}
 
 	@PostMapping("/decrypt")

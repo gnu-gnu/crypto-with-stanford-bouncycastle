@@ -22,15 +22,23 @@
 <br><br>
 <label for="plaintext">plaintext to encode</label>
 <input type="text" id="plaintext" value="hello world!!"/>
-<input type="button" value="encrypt text" id="encrypt"/>
 <br>
 <label for="encrypted">encrypted text</label>
 <input type="text" id="encrypted" readonly/>
-<br><br>
-<input type="button" value="send encrypted text and get decrypted text" id="decrypt"/>
 <br>
-<input type="text" id="decrypted" readonly/>
-
+<input type="button" value="encrypt text" id="encrypt"/>
+<br><br>
+<label for="decrypted">Server-side decrypted</label>
+<input type="text" id="decrypted" readonly/><br>
+<input type="button" value="send encrypted text and get decrypted text" id="decrypt"/>
+<br><br>
+<label for="d">private exp</label>
+<input type="text" id="d" readonly/>
+<br>
+<label for="cli-decrypted">Client-side decrypted</label>
+<input type="text" id="cli-decrypted" readonly/>
+<br>
+<input type="button" value="get privatekey from server and client side decrypt" id="cli-decrypt"/>
 <script>
 var rsa = new RSAKey();
 $("#get").on("click", function(){
@@ -49,6 +57,14 @@ $("#decrypt").on("click", function(){
 	var param = {"message" : $("#encrypted").val()};
 	$.post("decrypt", param).then(function(res){
 		$("#decrypted").val(res);
+	});
+});
+
+$("#cli-decrypt").on("click", function(){
+	$.get("getPrivatekey").then(function(res){
+		$("#d").val(parseBigInt(res.d).toString(16));
+		rsa.setPrivate($("#n").val(), $("#e").val(), parseBigInt(res.d).toString(16));
+		$("#cli-decrypted").val(rsa.decrypt(encrypted.value));
 	});
 });
 </script>
