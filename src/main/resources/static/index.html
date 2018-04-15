@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<title>RSA crypto test with using stanford jsbn2 and Bouncycastle</title>
+<script src="js/jsbn.js"></script>
+<script src="js/jsbn2.js"></script>
+<script src="js/prng4.js"></script>
+<script src="js/rng.js"></script>
+<script src="js/rsa.js"></script>
+<script src="js/rsa2.js"></script>
+<script src="http://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+</head>
+<body>
+<h1>RSA crypto test</h1>
+<label for="n">n(=p*q)</label>
+<input type="text" id="n"/>
+<br>
+<label for="e">public exp</label>
+<input type="text" id="e"/> <span> -> fermat number, recommend F4 or 3</span>
+<br>
+<input type="button" value="generate keypair and get public key" id="get"/>
+<br><br>
+<label for="plaintext">plaintext to encode</label>
+<input type="text" id="plaintext" value="hello world!!"/>
+<input type="button" value="encrypt text" id="encrypt"/>
+<br>
+<label for="encrypted">encrypted text</label>
+<input type="text" id="encrypted" readonly/>
+<br><br>
+<input type="button" value="send encrypted text and get decrypted text" id="decrypt"/>
+<br>
+<input type="text" id="decrypted" readonly/>
+
+<script>
+var rsa = new RSAKey();
+$("#get").on("click", function(){
+	$.get("generateKey").then(function(res){
+		$("#n").val(parseBigInt(res.n).toString(16));
+		$("#e").val(res.e);
+		rsa.setPublic(parseBigInt(res.n).toString(16), res.e);
+	});
+});
+
+$("#encrypt").on("click", function(){
+	$("#encrypted").val(rsa.encrypt($("#plaintext").val()));
+});
+
+$("#decrypt").on("click", function(){
+	var param = {"message" : $("#encrypted").val()};
+	$.post("decrypt", param).then(function(res){
+		$("#decrypted").val(res);
+	});
+});
+</script>
+</body>
+</html>
